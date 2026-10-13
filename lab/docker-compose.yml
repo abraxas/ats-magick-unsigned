@@ -1,0 +1,60 @@
+name: ats-magick-unsigned
+
+services:
+  origin:
+    image: python:3.13-slim
+    init: true
+    restart: "no"
+    command: ["python3", "/origin.py"]
+    volumes:
+      - ./origin.py:/origin.py:ro
+      - ./img.png:/img.png:ro
+    ports:
+      - "127.0.0.1:18801:8080"
+    labels:
+      lab: ats-magick-unsigned
+
+  ats-unsigned:
+    image: ats-10.2.0-lab:local
+    pull_policy: never
+    init: true
+    restart: "no"
+    user: "nobody"
+    depends_on:
+      - origin
+    command: ["traffic_server", "-T", "ats-magick"]
+    ports:
+      - "127.0.0.1:18800:8080"
+    volumes:
+      - ./plugin.config:/opt/ats/etc/trafficserver/plugin.config:ro
+      - ./remap-unsigned.config:/opt/ats/etc/trafficserver/remap.config:ro
+      - ./records.yaml:/opt/ats/etc/trafficserver/records.yaml:ro
+      - ./storage.config:/opt/ats/etc/trafficserver/storage.config:ro
+      - ./policy.xml:/etc/ImageMagick-6/policy.xml:ro
+      - ./policy.xml:/tmp/policy.xml:ro
+      - ./oracle-unsigned:/tmp/oracle
+    labels:
+      lab: ats-magick-unsigned
+
+  ats-signed:
+    image: ats-10.2.0-lab:local
+    pull_policy: never
+    init: true
+    restart: "no"
+    user: "nobody"
+    depends_on:
+      - origin
+    command: ["traffic_server", "-T", "ats-magick"]
+    ports:
+      - "127.0.0.1:18802:8080"
+    volumes:
+      - ./plugin-signed.config:/opt/ats/etc/trafficserver/plugin.config:ro
+      - ./remap-signed.config:/opt/ats/etc/trafficserver/remap.config:ro
+      - ./records.yaml:/opt/ats/etc/trafficserver/records.yaml:ro
+      - ./storage.config:/opt/ats/etc/trafficserver/storage.config:ro
+      - ./policy.xml:/etc/ImageMagick-6/policy.xml:ro
+      - ./policy.xml:/tmp/policy.xml:ro
+      - ./rsa256-public.key:/opt/ats/etc/trafficserver/rsa256-public.key:ro
+      - ./oracle-signed:/tmp/oracle
+    labels:
+      lab: ats-magick-unsigned
