@@ -13,6 +13,10 @@
   &nbsp;·&nbsp;
   <a href="https://github.com/abraxas/ats-magick-unsigned">ats-magick-unsigned</a>
 </p>
+<p align="center">
+  Write-up: <a href="https://abraxaslabs.tech/research/ats-magick-unsigned"><strong>https://abraxaslabs.tech/research/ats-magick-unsigned</strong></a>
+</p>
+
 
 # ats-magick-unsigned
 
